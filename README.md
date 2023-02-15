@@ -1,4 +1,3 @@
-### K8S REPO 
+## K8S REPO 
 
-## REPO consists of value.yml for all deployments in eks-test-cluster such as 
-## nexus, jenkins, 
+## REPO consists of value.yml for all deployments in eks-test-cluster such as nexus, jenkins, 
