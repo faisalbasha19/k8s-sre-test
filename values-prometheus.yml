@@ -258,7 +258,12 @@ server:
 
     ## Prometheus server Ingress annotations
     ##
-    annotations: {}
+    annotations:
+      kubernetes.io/ingress.class: alb
+      alb.ingress.kubernetes.io/scheme: internal
+      alb.ingress.kubernetes.io/subnets: subnet-062bb7fc2d7915c1b,subnet-0c8a9af6c28aad947
+      alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}'
+
     #   kubernetes.io/ingress.class: nginx
     #   kubernetes.io/tls-acme: 'true'
 
@@ -374,7 +379,7 @@ server:
     ##   set, choosing the default provisioner.  (gp2 on AWS, standard on
     ##   GKE, AWS & OpenStack)
     ##
-    # storageClass: "-"
+    storageClass: "gp3"
 
     ## Prometheus server data Persistent Volume Binding Mode
     ## If defined, volumeBindingMode: <volumeBindingMode>
@@ -546,7 +551,11 @@ server:
     ##
     enabled: true
 
-    annotations: {}
+    annotations:
+      service.beta.kubernetes.io/aws-load-balancer-type: nlb
+      service.beta.kubernetes.io/aws-load-balancer-internal: "true"
+      service.beta.kubernetes.io/aws-load-balancer-subnets: subnet-062bb7fc2d7915c1b
+
     labels: {}
     clusterIP: ""
 
@@ -559,7 +568,7 @@ server:
     loadBalancerSourceRanges: []
     servicePort: 80
     sessionAffinity: None
-    type: ClusterIP
+    type: LoadBalancer
 
     ## Enable gRPC port on service to allow auto discovery with thanos-querier
     gRPC:

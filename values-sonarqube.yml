@@ -337,8 +337,8 @@ annotations: {}
 ## Adjust these values to your needs, but make sure that the memory limit is never under 4 GB
 resources:
   limits:
-    cpu: 800m
-    memory: 4Gi
+    cpu: 400m
+    memory: 2Gi
   requests:
     cpu: 400m
     memory: 2Gi
@@ -358,7 +358,7 @@ persistence:
   ##   set, choosing the default provisioner.  (gp2 on AWS, standard on
   ##   GKE, AWS & OpenStack)
   ##
-  storageClass:
+  storageClass: gp3
   accessMode: ReadWriteOnce
   size: 5Gi
   uid: 1000
@@ -434,16 +434,16 @@ postgresql:
     port: 5432
   resources:
     limits:
-      cpu: 2
-      memory: 2Gi
+      cpu: 100m
+      memory: 200Mi
     requests:
       cpu: 100m
       memory: 200Mi
   persistence:
     enabled: true
     accessMode: ReadWriteOnce
-    size: 20Gi
-    storageClass:
+    size: 10Gi
+    storageClass: gp3
   securityContext:
     # For standard Kubernetes deployment, set enabled=true
     # If using OpenShift, enabled=false for restricted SCC and enabled=true for anyuid/nonroot SCC
