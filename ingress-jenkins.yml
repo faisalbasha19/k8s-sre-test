@@ -28,6 +28,6 @@ spec:
         path: /
         backend:
           service:
-            name: my-release-jenkins
+            name: jenkins-service
             port:
-              number: 80
+              number: 8080

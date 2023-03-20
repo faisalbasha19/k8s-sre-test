@@ -31,7 +31,7 @@ nexus:
         -XX:+UseCGroupMemoryLimitForHeap
         -Djava.util.prefs.userRoot=/nexus-data/javaprefs
     - name: NEXUS_SECURITY_RANDOMPASSWORD
-      value: "true"
+      value: "false"
   properties:
     override: false
     data:
@@ -89,13 +89,14 @@ deployment:
   # # Add init containers. e.g. to be used to give specific permissions for nexus-data.
   # # Add your own init container or uncomment and modify the given example.
   initContainers:
-  #   - name: fmp-volume-permission
-  #   image: busybox
-  #   imagePullPolicy: IfNotPresent
-  #   command: ['chown','-R', '200', '/nexus-data']
-  #   volumeMounts:
-  #     - name: nexus-data
-  #       mountPath: /nexus-data
+          #- name: fmp-volume-permission
+          #image: busybox
+          #imagePullPolicy: IfNotPresent
+          #command: ['chown','-R', '200', '/nexus-data']
+          #volumeMounts:
+          #- name: nexus-data
+          #mountPath: /nexus-data
+          #readOnly: true
   # Uncomment and modify this to run a command after starting the nexus container.
   postStart:
     command:    # '["/bin/sh", "-c", "ls"]'
@@ -150,7 +151,7 @@ persistence:
   ##   set, choosing the default provisioner.  (gp2 on AWS, standard on
   ##   GKE, AWS & OpenStack)
   ##
-  # existingClaim:
+  existingClaim: "nexus-repo-nexus-repository-manager-data"
   # annotations:
   #  "helm.sh/resource-policy": keep
   storageClass: "gp3"

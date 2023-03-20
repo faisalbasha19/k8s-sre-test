@@ -94,11 +94,11 @@ image:
 
 ## @param jenkinsUser Jenkins username
 ##
-jenkinsUser: user
+jenkinsUser: admin
 ## @param jenkinsPassword Jenkins user password
 ## Defaults to a random 10-character alphanumeric string if not set
 ##
-jenkinsPassword: ""
+jenkinsPassword: "admin"
 ## @param jenkinsHost Jenkins host to create application URLs
 ##
 jenkinsHost: ""
@@ -148,7 +148,7 @@ updateStrategy:
 
 ## @param serviceAccountName Jenkins pod service account name
 ##
-serviceAccountName: "default"
+serviceAccountName: "jenkins-sa"
 
 ## @param priorityClassName Jenkins pod priority class name
 ##
@@ -332,6 +332,18 @@ customLivenessProbe: {}
 ## @param customReadinessProbe Custom readinessProbe that overrides the default one
 #
 customReadinessProbe: {}
+
+configAsCode:
+  enabled: true
+  
+agent:
+  enabled: true
+  image:
+   registry: qa-docker-nexus.mtnsat.io
+   repository: qa-docker-nexus.mtnsat.io/dockerrepo/jenkinsinboundagent:latest
+   tag: latest
+   pullPolicy: always
+   pullSecrets: regsecret
 
 ## @section Traffic Exposure Parameters
 
@@ -518,7 +530,7 @@ persistence:
   ## If set to "-", storageClassName: "", which disables dynamic provisioning
   ## If undefined (the default) or set to null, no storageClassName spec is set, choosing the default provisioner
   ##
-  storageClass: ""
+  storageClass: "gp3"
   ## @param persistence.existingClaim Use a existing PVC which must be created manually before bound
   ##
   existingClaim: ""

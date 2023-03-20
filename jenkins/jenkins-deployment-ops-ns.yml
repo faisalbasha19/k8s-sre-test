@@ -1,0 +1,91 @@
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: jenkins-pvc
+  namespace: jenkins-test
+spec:
+  accessModes:
+  - ReadWriteOnce
+  storageClassName: gp3
+  resources:
+    requests:
+      storage: 5Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jenkins
+  namespace: jenkins-test
+spec:
+  replicas: 1
+  selector:
+   matchLabels:
+     app: jenkins
+  template:
+    metadata:
+      labels:
+        app: jenkins
+    spec:
+      serviceAccount: jenkins-admin
+      serviceAccountName: jenkins-admin
+      securityContext:
+          fsGroup: 1000
+          runAsGroup: 1000
+          runAsUser: 1000
+      containers:
+      - image: jenkins/jenkins:lts
+        imagePullPolicy: Always
+        name: jenkins
+        ports: 
+        - containerPort: 8080
+          name: http-port
+        - containerPort: 50000
+          name: jnlp-port
+        volumeMounts:
+        - name: jenkins-data
+          mountPath: /var/jenkins_home
+      volumes:
+      - name: jenkins-data
+        persistentVolumeClaim:
+          claimName: jenkins-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: jenkins-agent-service
+  namespace: jenkins-test
+  annotations:
+      prometheus.io/scrape: 'true'
+      prometheus.io/path:   /
+      prometheus.io/port:   '50000'
+spec:
+  selector:
+    app: jenkins
+  type: ClusterIP
+  ports:
+    - name: jnlpport
+      port: 50000
+      targetPort: 50000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: jenkins-service
+  namespace: jenkins-test
+  annotations:
+      prometheus.io/scrape: 'true'
+      prometheus.io/path:   /
+      prometheus.io/port:   '8080'
+      service.beta.kubernetes.io/aws-load-balancer-type: nlb
+      service.beta.kubernetes.io/aws-load-balancer-internal: "true"
+      service.beta.kubernetes.io/aws-load-balancer-subnets: subnet-062bb7fc2d7915c1b,subnet-0c8a9af6c28aad947
+spec:
+  selector:
+    app: jenkins
+  type: LoadBalancer
+  ports:
+    - name: httpport
+      port: 8080
+      targetPort: 8080
+      nodePort: 32000
